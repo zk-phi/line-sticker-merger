@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { decode, toRGBA8, encode } from 'upng-js'
+import Pica from 'pica';
 
 /* TODO:
    - Resize to 240x240
@@ -7,7 +8,10 @@ import { decode, toRGBA8, encode } from 'upng-js'
  */
 
 const SRC_SIZE = 270;
-const CNUM = 256;
+const TARGET_SIZE = 240;
+const CNUM = 512;
+
+const pica = new Pica();
 
 type DecodedPng = {
   url: string,
@@ -30,6 +34,14 @@ const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve)
   };
   reader.readAsArrayBuffer(file);
 });
+
+const resizeCanvas = async (src: HTMLCanvasElement, w: number, h: number) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  await pica.resize(src, canvas);
+  return canvas;
+};
 
 const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
   const canvas = document.createElement("canvas");
@@ -68,10 +80,12 @@ const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
     }
     ctx.clearRect(0, 0, SRC_SIZE * 2, SRC_SIZE * 2);
     ctx.putImageData(data, 0, 0);
-    const mergedData = ctx.getImageData(0, 0, SRC_SIZE * 2, SRC_SIZE * 2);
+    const resized = await resizeCanvas(canvas, TARGET_SIZE, TARGET_SIZE);
+    const resizedCtx = resized.getContext("2d");
+    const mergedData = resizedCtx.getImageData(0, 0, TARGET_SIZE, TARGET_SIZE);
     mergedFrames.push(mergedData.data);
   }
-  const merged = encode(mergedFrames, SRC_SIZE * 2, SRC_SIZE * 2, CNUM, dels);
+  const merged = encode(mergedFrames, TARGET_SIZE, TARGET_SIZE, CNUM, dels);
   return URL.createObjectURL(new Blob([merged], { type: "image/apng" }));
 };
 
