@@ -66,8 +66,11 @@ const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
         arr[ix3 * 4 + 3] = pngs[3].frames[i][ix * 4 + 3];
       }
     }
-    mergedFrames.push(arr);
-  });
+    ctx.clearRect(0, 0, SRC_SIZE * 2, SRC_SIZE * 2);
+    ctx.putImageData(data, 0, 0);
+    const mergedData = ctx.getImageData(0, 0, SRC_SIZE * 2, SRC_SIZE * 2);
+    mergedFrames.push(mergedData.data);
+  }
   const merged = encode(mergedFrames, SRC_SIZE * 2, SRC_SIZE * 2, CNUM, dels);
   return URL.createObjectURL(new Blob([merged], { type: "image/apng" }));
 };
