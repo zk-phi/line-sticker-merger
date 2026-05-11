@@ -38,7 +38,7 @@ const mergeApngs = (pngs: DecodedPng[], dels: number[]): string => {
   const ctx = canvas.getContext("2d");
 
   const mergedFrames = [];
-  dels.forEach((del, i) => {
+  for (const [i, del] of Object.entries(dels)) {
     const arr = new Uint8ClampedArray((SRC_SIZE * 2) * (SRC_SIZE * 2) * 4);
     for (let x = 0; x < SRC_SIZE; x++) {
       for (let y = 0; y < SRC_SIZE; y++) {
