@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { decode, toRGBA8, encode } from 'upng-js'
+import { useState, useCallback } from 'react';
+import { decode, toRGBA8, encode } from 'upng-js';
 import Pica from 'pica';
 
 const SRC_SIZE = 270;
@@ -9,13 +9,7 @@ const LOOP = 2;
 
 const pica = new Pica();
 
-type DecodedPng = {
-  url: string,
-  dels: number[],
-  frames: Uint8ClampedArray[],
-};
-
-const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve) => {
+const decodePngFile = (file) => new Promise((resolve) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     const buf = e.target.result;
@@ -31,7 +25,7 @@ const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve)
   reader.readAsArrayBuffer(file);
 });
 
-const resizeCanvas = async (src: HTMLCanvasElement, w: number, h: number) => {
+const resizeCanvas = async (src, w, h) => {
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
@@ -39,7 +33,7 @@ const resizeCanvas = async (src: HTMLCanvasElement, w: number, h: number) => {
   return canvas;
 };
 
-const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
+const mergeApngs = async (pngs, dels) => {
   const canvas = document.createElement("canvas");
   canvas.width = 2 * SRC_SIZE;
   canvas.height = 2 * SRC_SIZE;
@@ -86,10 +80,10 @@ const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
 };
 
 function App() {
-  const [dels, setDels] = useState<number[]>([]);
-  const [targets, setTargets] = useState<DecodedPng[]>([]);
-  const [pngs, setPngs] = useState<DecodedPng[]>([]);
-  const [result, setResult] = useState<string | null>(null);
+  const [dels, setDels] = useState([]);
+  const [targets, setTargets] = useState([]);
+  const [pngs, setPngs] = useState([]);
+  const [result, setResult] = useState(null);
 
   const onSelectFile = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -97,15 +91,15 @@ function App() {
     setPngs((pngs) => [...pngs, png]);
   }, [setPngs]);
 
-  const onRemoveTarget = useCallback((i: number) => {
+  const onRemoveTarget = useCallback((i) => {
     setTargets((targets) => targets.filter((_, j) => i !== j));
   }, [setTargets]);
 
-  const onSelectBase = useCallback((i: number) => {
+  const onSelectBase = useCallback((i) => {
     setDels(pngs[i].dels);
   }, [pngs, setDels]);
 
-  const onAddTarget = useCallback((i: number) => {
+  const onAddTarget = useCallback((i) => {
     setTargets((targets) => [...targets, pngs[i]]);
   }, [pngs, dels, setTargets]);
 
@@ -151,7 +145,7 @@ function App() {
             { JSON.stringify(png.dels) }
             { !dels.length && (
               <button type="button" onClick={ () => onSelectBase(i) }>
-                フレームレートをセット
+                このフレームレートを使う
               </button>
             ) }
           </div>
@@ -159,6 +153,6 @@ function App() {
       )) }
     </>
   )
-}
+};
 
-export default App
+export default App;
