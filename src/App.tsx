@@ -2,14 +2,10 @@ import { useState, useCallback } from 'react'
 import { decode, toRGBA8, encode } from 'upng-js'
 import Pica from 'pica';
 
-/* TODO:
-   - Resize to 240x240
-   - Limit loop number
- */
-
 const SRC_SIZE = 270;
 const TARGET_SIZE = 240;
 const CNUM = 512;
+const LOOP = 2;
 
 const pica = new Pica();
 
@@ -85,7 +81,7 @@ const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
     const mergedData = resizedCtx.getImageData(0, 0, TARGET_SIZE, TARGET_SIZE);
     mergedFrames.push(mergedData.data);
   }
-  const merged = encode(mergedFrames, TARGET_SIZE, TARGET_SIZE, CNUM, dels);
+  const merged = encode(mergedFrames, TARGET_SIZE, TARGET_SIZE, CNUM, dels, { loop: LOOP });
   return URL.createObjectURL(new Blob([merged], { type: "image/apng" }));
 };
 
