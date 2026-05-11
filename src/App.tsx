@@ -15,7 +15,7 @@ type DecodedPng = {
   frames: Uint8ClampedArray[],
 };
 
-const decodePngFile = (file: File, cb: (png: DecodedPng) => void) => {
+const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     const buf = e.target.result;
@@ -26,10 +26,10 @@ const decodePngFile = (file: File, cb: (png: DecodedPng) => void) => {
     const frames = toRGBA8(decoded).map((buf) => new Uint8ClampedArray(buf));
     const dels = decoded.frames.map((frame) => frame.delay);
     const url = URL.createObjectURL(new Blob([buf], { type: "image/apng" }));
-    cb({ url, frames, dels });
+    resolve({ url, frames, dels });
   };
   reader.readAsArrayBuffer(file);
-};
+});
 
 const mergeApngs = (pngs: DecodedPng[], dels: number[]): string => {
   const canvas = document.createElement("canvas");
@@ -77,9 +77,10 @@ function App() {
   const [pngs, setPngs] = useState<DecodedPng[]>([]);
   const [result, setResult] = useState<string | null>(null);
 
-  const onSelectFile = useCallback((e) => {
+  const onSelectFile = useCallback(async (e) => {
     const file = e.target.files[0];
-    decodePngFile(file, (png) => setPngs((pngs) => [...pngs, png]));
+    const png = await decodePngFile(file);
+    setPngs((pngs) => [...pngs, png]);
   }, [setPngs]);
 
   const onRemoveTarget = useCallback((i: number) => {
