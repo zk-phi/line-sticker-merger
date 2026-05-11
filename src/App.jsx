@@ -109,9 +109,12 @@ function App() {
 
   return (
     <>
-      <div>
-        Target:
-      </div>
+      <h2>LINE アニメーションスタンプのメイン画像を作るやつ</h2>
+      <p>
+        ４枚の 270x270 の APNG を合体させて、１枚の 240x240 の APNG を作ります。
+      </p>
+      <hr />
+      <h4>ターゲット</h4>
       { targets.map((target, i) => (
         <div key={i}>
           <img src={target.url} width={64} height={64} />
@@ -132,6 +135,7 @@ function App() {
         </div>
       ) }
       <hr />
+      <h4>ファイルを追加</h4>
       <input type="file" onChange={ onSelectFile } />
       { pngs.map((png, i) => (
         <section key={i}>
