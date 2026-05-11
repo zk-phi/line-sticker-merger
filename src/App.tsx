@@ -31,7 +31,7 @@ const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve)
   reader.readAsArrayBuffer(file);
 });
 
-const mergeApngs = (pngs: DecodedPng[], dels: number[]): string => {
+const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
   const canvas = document.createElement("canvas");
   canvas.width = 4 * SRC_SIZE;
   canvas.height = 4 * SRC_SIZE;
@@ -96,8 +96,8 @@ function App() {
     setTargets((targets) => [...targets, pngs[i]]);
   }, [pngs, dels, setTargets]);
 
-  const onGenerate = useCallback(() => {
-    setResult(mergeApngs(targets, dels));
+  const onGenerate = useCallback(async () => {
+    setResult(await mergeApngs(targets, dels));
   }, [targets, dels, setResult]);
 
   return (
