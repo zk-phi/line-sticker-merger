@@ -33,8 +33,8 @@ const decodePngFile = (file: File): Promise<DecodedPng> => new Promise((resolve)
 
 const mergeApngs = async (pngs: DecodedPng[], dels: number[]): string => {
   const canvas = document.createElement("canvas");
-  canvas.width = 4 * SRC_SIZE;
-  canvas.height = 4 * SRC_SIZE;
+  canvas.width = 2 * SRC_SIZE;
+  canvas.height = 2 * SRC_SIZE;
   const ctx = canvas.getContext("2d");
 
   const mergedFrames = [];
